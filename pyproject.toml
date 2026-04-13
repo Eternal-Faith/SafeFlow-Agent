@@ -1,0 +1,40 @@
+[project]
+name = "safeflow-agent"
+version = "0.1.0"
+description = "SafeFlow-Agent: a safety decision and automation agent for ride-hailing incident triage."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "chromadb>=0.5.5",
+    "fastapi>=0.111.0",
+    "langgraph>=0.2.14",
+    "openai>=1.42.0",
+    "pydantic>=2.8.2",
+    "python-dotenv>=1.0.1",
+    "streamlit>=1.37.1",
+    "uvicorn>=0.30.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.27.0",
+    "pytest>=8.3.2",
+]
+
+[project.scripts]
+safeflow-api = "safeflow_agent.api:run"
+safeflow-eval = "safeflow_agent.evaluation:main"
+
+[build-system]
+requires = ["setuptools>=69.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
