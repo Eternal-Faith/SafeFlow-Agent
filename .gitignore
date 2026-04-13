@@ -41,5 +41,8 @@ var/
 # Local tool metadata
 .codex
 
+# Local planning docs
+docs/
+
 # Personal local files
 郝锦杰-北京邮电大学.pdf
