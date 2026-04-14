@@ -141,31 +141,58 @@ tests/
 
 ## 快速启动
 
-### Linux / 服务器运行
+### 环境要求
 
-如果你只是想快速体验 Web 界面，直接启动 Streamlit 即可。当前 `streamlit_app.py` 会在同一进程里直接调用 `SafeFlowService`，不依赖单独启动 FastAPI。
+- Python `3.11+`
+- 可选：OpenAI 兼容接口，用于启用真实多模态解析和更完整的 LLM 推理
+
+### 安装
 
 ```bash
-cd /data/hjj2/SafeFlow-Agent
-conda activate hjj_rag_env
-pip install -e .[dev]
-python -m pytest -q
-python -m streamlit run streamlit_app.py --server.address 0.0.0.0 --server.port 8501
+git clone <your-repo-url>
+cd SafeFlow-Agent
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .[dev]
 ```
 
-如果不想激活环境，也可以直接使用解释器绝对路径：
+如果你使用 Conda，也可以执行：
 
 ```bash
-cd /data/hjj2/SafeFlow-Agent
-/data/miniconda3/envs/hjj_rag_env/bin/pip install -e .[dev]
-/data/miniconda3/envs/hjj_rag_env/bin/python -m pytest -q
-/data/miniconda3/envs/hjj_rag_env/bin/python -m streamlit run streamlit_app.py --server.address 0.0.0.0 --server.port 8501
+conda create -n safeflow-agent python=3.11 -y
+conda activate safeflow-agent
+python -m pip install -e .[dev]
+```
+
+可选环境变量：
+
+```bash
+cp .env.example .env
+```
+
+然后按需填写：
+
+```bash
+OPENAI_API_KEY=your-api-key
+OPENAI_BASE_URL=https://api.openai.com/v1
+SAFEFLOW_LLM_MODEL=gpt-4o-mini
+SAFEFLOW_VISION_MODEL=gpt-4o-mini
+SAFEFLOW_AUDIO_MODEL=gpt-4o-mini
+```
+
+### 运行 Web 界面
+
+如果你只是想快速体验界面，直接启动 Streamlit 即可。当前 `streamlit_app.py` 会在同一进程里直接调用 `SafeFlowService`，不依赖单独启动 FastAPI。
+
+```bash
+python -m pytest -q
+python -m streamlit run streamlit_app.py --server.address 0.0.0.0 --server.port 8501
 ```
 
 浏览器打开：
 
 ```text
-http://<server-ip>:8501
+http://localhost:8501
 ```
 
 ### Windows 本地开发
@@ -173,21 +200,13 @@ http://<server-ip>:8501
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -e .[dev]
+python -m pip install -e .[dev]
+Copy-Item .env.example .env
+python -m pytest -q
 python -m streamlit run streamlit_app.py
 ```
 
-可选环境变量：
-
-```bash
-export OPENAI_API_KEY="your-api-key"
-export OPENAI_BASE_URL="https://api.openai.com/v1"
-export SAFEFLOW_LLM_MODEL="gpt-4o-mini"
-export SAFEFLOW_VISION_MODEL="gpt-4o-mini"
-export SAFEFLOW_AUDIO_MODEL="gpt-4o-mini"
-```
-
-Windows PowerShell 对应写法：
+如果需要配置环境变量，可在 `.env` 中填写：
 
 ```powershell
 $env:OPENAI_API_KEY="your-api-key"
@@ -200,9 +219,7 @@ $env:SAFEFLOW_LLM_MODEL="gpt-4o-mini"
 如果你想把能力暴露成标准 HTTP 接口，再额外启动 FastAPI：
 
 ```bash
-cd /data/hjj2/SafeFlow-Agent
-conda activate hjj_rag_env
-PYTHONPATH=src uvicorn safeflow_agent.api:app --host 0.0.0.0 --port 8018 --reload
+python -m uvicorn safeflow_agent.api:app --host 0.0.0.0 --port 8018 --reload --app-dir src
 ```
 
 ### 运行评测
